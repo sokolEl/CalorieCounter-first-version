@@ -1,7 +1,8 @@
 package view.impl;
-import view.CmdLineService;
+
 import services.FoodService;
 import services.impl.FoodServiceImpl;
+import view.CmdLineService;
 import view.ValidatorImpl;
 
 import java.io.BufferedReader;
@@ -15,10 +16,13 @@ public class CmdLineServiceImpl implements CmdLineService{
     private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     public CmdLineServiceImpl(FoodServiceImpl foodService) {
-        this.foodService=foodService;
-
+        this.foodService = foodService;
     }
 
+    //TODO Модификаторы доступа могут быть везде private кроме метода runMenu()! Исправить.
+
+    //TODO Статические методы обычно идут в конце класса. перенести!
+    //пусть каждый пункт будет с новой строки, мне кажется так удобнее читать
     static void menu() {
         System.out.println();
         System.out.println("Добавить продукт нажмите <<1>>  " +
@@ -40,8 +44,7 @@ public class CmdLineServiceImpl implements CmdLineService{
         try {
             do {
                 menu();
-                s = br.readLine();
-                switch (s) {
+                switch (s = br.readLine()) {
                     case "1":
                         addFoodtoList();
                         break;
@@ -70,45 +73,47 @@ public class CmdLineServiceImpl implements CmdLineService{
         String product = br.readLine();
         if (foodService.containsFood(product)) {//отслеживаем что продукт есть в базе
 
-                while(true){
-                     System.out.println("Введите количество продукта в граммах");
-                    int weight = ValidatorImpl.checkForNumbers(br.readLine());
-                     if (weight != 0) {
-                         foodService.addCurrentFood(product, weight);
-                         System.out.println("Продукт был добавлен в список учета калорий за день");//если введенное количество представлено числами и его можно распарсить
-                         break;
-                     } else {
-                         System.out.println("Убедитесь, что вы используете цифры");
-                     }
-                 }
+            while (true) {
+                System.out.println("Введите количество продукта в граммах");
+                int weight = ValidatorImpl.checkForNumbers(br.readLine());
+                if (weight != 0) {
+                    foodService.addCurrentFood(product, weight);
+                    System.out.println("Продукт был добавлен в список учета калорий за день");//если введенное количество представлено числами и его можно распарсить
+                    break;
+                } else {
+                    System.out.println("Убедитесь, что вы используете цифры");
                 }
-                else {System.out.println("Такого продукта нет в базе!");
-                 addingNewFood();
-                 }
+            }
+        } else {
+            System.out.println("Такого продукта нет в базе!");
+            addingNewFood();
+        }
 
-                }
+    }
 
     public void addingNewFood() throws IOException {
         menuforAdding();
-        String desicion = br.readLine();
-        switch (desicion) {
+        String decision = br.readLine();
+        switch (decision) {
 
             case "1":
                 System.out.println("Введите название продукта, который Вы хотите добавить в базу");
                 String newFoodName = br.readLine();
-              do{
-                System.out.println("Введите калорийность продукта на 100 грамм");
-                  int calories = ValidatorImpl.checkForNumbers(br.readLine());
-                if (calories!=0){
-                    foodService.addFoodtoData(newFoodName, calories);
-                System.out.println("Продукт был добавлен в базу");break;}
-                else {
-                    System.out.println("Убедитесь, что вы используете цифры");
+                do {
+                    System.out.println("Введите калорийность продукта на 100 грамм");
+                    int calories = ValidatorImpl.checkForNumbers(br.readLine());
+                    if (calories != 0) {
+                        foodService.addFoodtoData(newFoodName, calories);
+                        System.out.println("Продукт был добавлен в базу");
+                        break;
+                    } else {
+                        System.out.println("Убедитесь, что вы используете цифры");
+                    }
                 }
-              }
-               while (true);
-
-            case "2":addFoodtoList();break;
+                while (true);
+            case "2":
+                addFoodtoList();
+                break;
             default:
                 System.out.println("Необходимо ввести числа 1 или 2");
                 addingNewFood();

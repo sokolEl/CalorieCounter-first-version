@@ -18,7 +18,6 @@ public class FoodServiceImpl implements FoodService {
     private List<Food> currentFoods = new ArrayList<>();//массив для записи данных о продуктах и калориях за день
 
     public FoodServiceImpl() {
-
         addFromFile();
     }
 
@@ -50,6 +49,7 @@ public class FoodServiceImpl implements FoodService {
 
     public void showCurrentFoods() {
 
+        //TODO можно заменить на foreach
         for (int i = 0; i < currentFoods.size(); i++) {
             Food f = currentFoods.get(i);
             System.out.println(f.getFoodName() + " " + f.getCal() + "ккал");
@@ -80,6 +80,8 @@ public class FoodServiceImpl implements FoodService {
               System.out.println(ex.getMessage());
         }
     }
+
+    //TODO если ты перехватываешь ексепшн то его можно убрать из сигнатуры "throws IOException"
     public void addFoodtoData(String foodName, int calories) throws IOException {
         Food newFoodinData = new Food(foodName, calories);
         map.put(foodName, newFoodinData);
@@ -98,7 +100,8 @@ public class FoodServiceImpl implements FoodService {
         return map.containsKey(FoodName);
     }
 
+    //TODO 2 одинаковых метода. Зачем?
     public boolean containsFoodinList(String FoodName) {
         return map.containsKey(FoodName);
     }
-    }
+}
