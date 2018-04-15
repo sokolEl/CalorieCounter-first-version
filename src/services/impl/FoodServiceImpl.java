@@ -13,10 +13,9 @@ import java.io.BufferedWriter;
 
 
 public class FoodServiceImpl implements FoodService {
-
-    String fileName = "ссылка на базу/food.txt";
-    Map<String, Food> map = new HashMap<>(); //массив с данными
-    List<Food> currentFoods = new ArrayList<>();//массив для записи данных о продуктах и калориях за день
+    private String fileName = "/Users/elinasokol/Desktop/java/CalorieCounter-master/food.txt";
+    private Map<String, Food> map = new HashMap<>(); //массив с данными
+    private List<Food> currentFoods = new ArrayList<>();//массив для записи данных о продуктах и калориях за день
 
     public FoodServiceImpl() {
 
@@ -26,14 +25,13 @@ public class FoodServiceImpl implements FoodService {
 
     public void addFromFile() {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String s;
-            while ((s = br.readLine()) != null) {
-                String[] mas = new String[2];
-                mas = s.split(";");
+            String lines;
+            while ((lines = br.readLine()) != null) {
+                String[] mas = lines.split(";");
                 String foodName = mas[0];
                 int cal = Integer.parseInt(mas[1]);
-                Food a = new Food(foodName, cal);
-                map.put(foodName, a);
+                Food food = new Food(foodName, cal);
+                map.put(foodName, food);
 
             }
         } catch (IOException ex) {
@@ -44,10 +42,10 @@ public class FoodServiceImpl implements FoodService {
 
     public void addCurrentFood(String product, int weight) {
 
-        Food b = map.get(product);
-        int currentCal = (weight * b.getCal()) / 100;
-        Food a = new Food(product, currentCal);
-        currentFoods.add(a);
+        Food getToKnowAboutCurrentFood = map.get(product);
+        int currentCal = (weight * getToKnowAboutCurrentFood.getCal()) / 100;
+        Food addCurrentFood = new Food(product, currentCal);
+        currentFoods.add(addCurrentFood);
     }
 
     public void showCurrentFoods() {
@@ -61,19 +59,20 @@ public class FoodServiceImpl implements FoodService {
     public void removeFood(String name, int k) {
 
         for (int i = 0; i < currentFoods.size(); i++) {
-            Food z = currentFoods.get(i);
-            if (z.getFoodName().equals(name) && z.getCal() == k) {
+            Food removeFood = currentFoods.get(i);
+            if (removeFood.getFoodName().equals(name) && removeFood.getCal() == k) {
                 currentFoods.remove(i);
             }
         }
     }
-    public void saveFood() {
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("test.txt"))) {
+    public void saveFood() {  //TODO: сделать так чтобы создавался новый файл каждый день
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/elinasokol/Desktop/java/CalorieCounter-master/test.txt"))) {
             String text;
             for (int i = 0; i < currentFoods.size(); i++) {
-                Food f = currentFoods.get(i);
-                text = f.getFoodName() + " " + Integer.toString(f.getCal());
+                Food saveFood = currentFoods.get(i);
+                text = saveFood.getFoodName() + " " + Integer.toString(saveFood.getCal());
                 bw.write(text+"\n");
             }
         }
@@ -85,7 +84,7 @@ public class FoodServiceImpl implements FoodService {
         Food newFoodinData = new Food(foodName, calories);
         map.put(foodName, newFoodinData);
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("ссылка куда сохранять/test.txt"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/elinasokol/Desktop/java/CalorieCounter-master/test.txt"))) {
             String text;
                 text = newFoodinData.getFoodName() + " " + Integer.toString(newFoodinData.getCal());
                 bw.write(text+"\n");
@@ -95,15 +94,11 @@ public class FoodServiceImpl implements FoodService {
         }
     }
 
-    public boolean containsFood(String nameOfFood){
-        boolean cont= map.containsKey(nameOfFood);
-        if( cont ==true) return true;
-        else return false;
+    public boolean containsFood(String FoodName) {
+        return map.containsKey(FoodName);
     }
 
-    public boolean containsFoodinList(String nameOfFood){
-        boolean cont= map.containsKey(nameOfFood);
-        if( cont ==true) return true;
-        else return false;
+    public boolean containsFoodinList(String FoodName) {
+        return map.containsKey(FoodName);
     }
     }

@@ -1,6 +1,5 @@
 package view.impl;
 import view.CmdLineService;
-import view.Validator;
 import services.FoodService;
 import services.impl.FoodServiceImpl;
 import view.ValidatorImpl;
@@ -13,13 +12,27 @@ import java.io.InputStreamReader;
 public class CmdLineServiceImpl implements CmdLineService{
 
     private FoodService foodService;
-    private Validator validator=new ValidatorImpl();
-
-    private  BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     public CmdLineServiceImpl(FoodServiceImpl foodService) {
         this.foodService=foodService;
 
+    }
+
+    static void menu() {
+        System.out.println();
+        System.out.println("Добавить продукт нажмите <<1>>  " +
+                "Посмотреть данные за день <<2>>  " + "\n" +
+                "Удалить продукт из списка нажмите <<3>>  " +
+                "Для сохранения данных и выхода из приложения нажмите <<4>>");
+        System.out.println();// сделать нормальные отступы, не через sout
+    }
+
+    static void menuforAdding() {
+        System.out.println();
+        System.out.println("Добавить новый продукт в базу нажмите <<1>>  " +
+                "Для продолжения введите <<2>>  ");
+        System.out.println();
     }
 
     public void runMenu() {     //метод для считывания команд из меню
@@ -52,33 +65,25 @@ public class CmdLineServiceImpl implements CmdLineService{
     }
 
     private void addFoodtoList() throws IOException {
-        boolean chekforFood;
-        int weight;
-        String  product;
 
         System.out.println("Введите название продукта для того, чтобы добавить его в список калорий за день");
-        product = br.readLine();
-        chekforFood = this.foodService.containsFood(product); //отслеживаем что продукт есть в базе
-
-             if (chekforFood == true) {
+        String product = br.readLine();
+        if (foodService.containsFood(product)) {//отслеживаем что продукт есть в базе
 
                 while(true){
                      System.out.println("Введите количество продукта в граммах");
-                     weight = this.validator.checkForNumbers(br.readLine());
-
+                    int weight = ValidatorImpl.checkForNumbers(br.readLine());
                      if (weight != 0) {
-                         this.foodService.addCurrentFood(product, weight);
+                         foodService.addCurrentFood(product, weight);
                          System.out.println("Продукт был добавлен в список учета калорий за день");//если введенное количество представлено числами и его можно распарсить
                          break;
-                     }
-                     else { System.out.println("Убедитесь, что вы используете цифры");
+                     } else {
+                         System.out.println("Убедитесь, что вы используете цифры");
                      }
                  }
                 }
-
                 else {System.out.println("Такого продукта нет в базе!");
                  addingNewFood();
-
                  }
 
                 }
@@ -86,7 +91,6 @@ public class CmdLineServiceImpl implements CmdLineService{
     public void addingNewFood() throws IOException {
         menuforAdding();
         String desicion = br.readLine();
-
         switch (desicion) {
 
             case "1":
@@ -94,9 +98,9 @@ public class CmdLineServiceImpl implements CmdLineService{
                 String newFoodName = br.readLine();
               do{
                 System.out.println("Введите калорийность продукта на 100 грамм");
-                int calories = this.validator.checkForNumbers(br.readLine());
+                  int calories = ValidatorImpl.checkForNumbers(br.readLine());
                 if (calories!=0){
-                this.foodService.addFoodtoData(newFoodName, calories);
+                    foodService.addFoodtoData(newFoodName, calories);
                 System.out.println("Продукт был добавлен в базу");break;}
                 else {
                     System.out.println("Убедитесь, что вы используете цифры");
@@ -119,20 +123,16 @@ public class CmdLineServiceImpl implements CmdLineService{
     }
 
     void deleteFromList() throws IOException {
-        String foodName;
-        int calories;
-        boolean chekforFoodinList;
         System.out.println("Введите название продукта, который вы хотите удалить из списка");
-        foodName=br.readLine();
-        chekforFoodinList = this.foodService.containsFood(foodName); //отслеживаем что продукт есть в базе
-        if (chekforFoodinList==true){
+        String foodName = br.readLine();
+        if (this.foodService.containsFood(foodName)) {//отслеживаем что продукт есть в базе
 
             while (true) {
                 System.out.println("Введите количество калорий, которые Вы употребили с этим продуктом");
-                calories = this.validator.checkForNumbers(br.readLine());
-//сделать метод который пожтвержает что такой продукт с таким количеством калорий есть в списке
+                int calories = ValidatorImpl.checkForNumbers(br.readLine());
+//сделать метод который подтверждает что такой продукт с таким количеством калорий есть в списке
                 if (calories != 0) {
-                    this.foodService.removeFood(foodName, calories);
+                    foodService.removeFood(foodName, calories);
                     System.out.println("Продукт был удален из списка учета калорий за день");
                     break;
                 } else {
@@ -150,21 +150,6 @@ public class CmdLineServiceImpl implements CmdLineService{
      void saveAll() {
         foodService.saveFood();
         System.out.println("Все данные были сохранены");
-    }
-
-    static void menu() {
-        System.out.println();
-        System.out.println("Добавить продукт нажмите <<1>>  " +
-                "Посмотреть данные за день <<2>>  " +
-                "Удалить продукт из списка нажмите <<3>>  " +
-                "Для сохранения данных и выхода из приложения нажмите <<4>>");
-        System.out.println();// сделать нормальные отступы, не через sout
-    }
-    static void menuforAdding() {
-        System.out.println();
-        System.out.println("Добавить новый продукт в базу нажмите <<1>>  " +
-                "Для продолжения введите <<2>>  ");
-        System.out.println();
     }
 
 

@@ -1,11 +1,14 @@
 package view;
 
 
-public class ValidatorImpl implements Validator {
+public class ValidatorImpl {
 
 
+    private ValidatorImpl() {
 
-   public int checkForNumbers(String line) throws NumberFormatException {
+    }
+
+    static public int checkForNumbers(String line) {
        try{ int numb= Integer.parseInt(line);
            return numb;
        }
