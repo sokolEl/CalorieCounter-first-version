@@ -1,104 +1,100 @@
 package services.impl;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import dao.FileSystemDao;
+import dao.FoodDao;
 import model.Food;
 import services.FoodService;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+
 import java.util.HashMap;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
 
 
 public class FoodServiceImpl implements FoodService {
-    private String fileName = "/Users/elinasokol/Desktop/java/CalorieCounter-master/food.txt";
-    private Map<String, Food> map = new HashMap<>(); //массив с данными
-    private List<Food> currentFoods = new ArrayList<>();//массив для записи данных о продуктах и калориях за день
+    private String fileName = "/Users/elinasokol/Desktop/CalorieCounter-master/test.txt";
 
-    public FoodServiceImpl() {
+    private final FoodDao foodDao;
+    private final FileSystemDao fileSystemDao;
 
-        addFromFile();
+    public FoodServiceImpl(FoodDao foodDao, FileSystemDao fileSystemDao) {
+        this.foodDao = foodDao;
+        this.fileSystemDao = fileSystemDao;
     }
 
 
-    public void addFromFile() {
+    public void addToDiary(String product, int weight) { //вопрос к базе
+        String name = product;
+        int currentCalories=foodDao.getCalories(name);
+        int currentCal = (weight * currentCalories) / 100;
+        Food addCurrentFood = new Food(product, currentCal);
+        fileSystemDao.writeToDiary(addCurrentFood);
+
+    }
+
+    public void showDiaryFoods() {
+        fileSystemDao.showAllDiary();
+    }
+
+    public void removeDiaryFood(String name, int calories) {
+        List<Food> currentFoods = new ArrayList<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String lines;
             while ((lines = br.readLine()) != null) {
-                String[] mas = lines.split(";");
+                String[] mas = lines.split(" ");
                 String foodName = mas[0];
                 int cal = Integer.parseInt(mas[1]);
                 Food food = new Food(foodName, cal);
-                map.put(foodName, food);
+                currentFoods.add(food);
 
             }
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
 
-    }
-
-    public void addCurrentFood(String product, int weight) {
-
-        Food getToKnowAboutCurrentFood = map.get(product);
-        int currentCal = (weight * getToKnowAboutCurrentFood.getCal()) / 100;
-        Food addCurrentFood = new Food(product, currentCal);
-        currentFoods.add(addCurrentFood);
-    }
-
-    public void showCurrentFoods() {
-
-        for (int i = 0; i < currentFoods.size(); i++) {
-            Food f = currentFoods.get(i);
-            System.out.println(f.getFoodName() + " " + f.getCal() + "ккал");
-        }
-    }
-
-    public void removeFood(String name, int k) {
-
         for (int i = 0; i < currentFoods.size(); i++) {
             Food removeFood = currentFoods.get(i);
-            if (removeFood.getFoodName().equals(name) && removeFood.getCal() == k) {
+            if (removeFood.getFoodName().equals(name) && removeFood.getCal() == calories) {
                 currentFoods.remove(i);
             }
         }
+
+        fileSystemDao.deleteFromDiary();
+
+        for (int i = 0; i < currentFoods.size(); i++) {
+            Food rewrite = currentFoods.get(i);
+            fileSystemDao.writeToDiary(rewrite);
+        }
     }
 
-    public void saveFood() {  //TODO: сделать так чтобы создавался новый файл каждый день
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/elinasokol/Desktop/java/CalorieCounter-master/test.txt"))) {
-            String text;
-            for (int i = 0; i < currentFoods.size(); i++) {
-                Food saveFood = currentFoods.get(i);
-                text = saveFood.getFoodName() + " " + Integer.toString(saveFood.getCal());
-                bw.write(text+"\n");
+    public void addProductDBC(String foodName, int calories) {
+        Food newProduct = new Food(foodName, calories);
+        foodDao.addFoodDBC(newProduct);
+    }
+
+    public void deleteProductDBC(String name) {
+        foodDao.deleteFoodDBC(name);
+    }
+
+    public boolean containsDiaryFood(String name) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String lines;
+            while ((lines = br.readLine()) != null) {
+                String[] mas = lines.split(" ");
+                String foodName = mas[0];
+                if (foodName.equals(name)) return true;
             }
+        } catch (IOException ex) {
         }
-        catch(IOException ex){
-              System.out.println(ex.getMessage());
-        }
-    }
-    public void addFoodtoData(String foodName, int calories) throws IOException {
-        Food newFoodinData = new Food(foodName, calories);
-        map.put(foodName, newFoodinData);
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/elinasokol/Desktop/java/CalorieCounter-master/test.txt"))) {
-            String text;
-                text = newFoodinData.getFoodName() + " " + Integer.toString(newFoodinData.getCal());
-                bw.write(text+"\n");
-            }
-         catch (IOException e) {
-            e.printStackTrace();
-        }
+        return false;
     }
 
-    public boolean containsFood(String FoodName) {
-        return map.containsKey(FoodName);
+    public boolean containsProductDBC(String name) {
+
+        return foodDao.isProductDBC(name);
     }
 
-    public boolean containsFoodinList(String FoodName) {
-        return map.containsKey(FoodName);
-    }
-    }
+}

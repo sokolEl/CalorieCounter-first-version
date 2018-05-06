@@ -1,21 +1,22 @@
 package services;
 
-import java.io.IOException;
 
 public interface FoodService {
 
 
-    void addFromFile();
+    void addToDiary(String product, int weight);
 
-    void addCurrentFood(String product,int weight) ;
+    void showDiaryFoods();
 
-    void showCurrentFoods();
+    void removeDiaryFood(String name, int calories);
 
-    void removeFood(String name, int k);
+    boolean containsDiaryFood(String name);
 
-    void saveFood();
+    boolean containsProductDBC(String name);
 
-    boolean containsFood(String nameOfFood);
+    void addProductDBC(String foodName, int calories);
 
-    void addFoodtoData(String foodName, int calories) throws IOException;
+    void deleteProductDBC(String name);
+
+
 }
