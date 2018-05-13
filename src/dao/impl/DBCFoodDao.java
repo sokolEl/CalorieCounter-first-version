@@ -9,12 +9,6 @@ public class DBCFoodDao implements FoodDao {
     private static String DB_URL = "jdbc:h2:tcp://localhost/~/Programm";
 
     public DBCFoodDao() {
-        try {
-            Class.forName("org.h2.Driver");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Can't connect to DB");
-        }
-
         try (Connection connection = DriverManager.getConnection(DB_URL, "Test", "");//почему нельзя один раз создать конекшен
              Statement st = connection.createStatement()) {
             st.execute("CREATE TABLE IF NOT EXISTS CALORIES(ID INT NOT NULL AUTO_INCREMENT, NAME_OF_PRODUCT VARCHAR(255), CALORIES_PER_SERVING INT, PRIMARY KEY (id));");//добавить id
@@ -27,7 +21,7 @@ public class DBCFoodDao implements FoodDao {
     @Override
     public void addFoodDBC(Food newProduct) {
         try (Connection connection = DriverManager.getConnection(DB_URL, "Test", "");
-             PreparedStatement st = connection.prepareStatement("INSERT INTO CALORIES VALUES(default,?,?);")) {
+             PreparedStatement st = connection.prepareStatement("INSERT INTO CALORIES(NAME_OF_PRODUCT, CALORIES_PER_SERVING) VALUES(?,?);")) {
 
             st.setString(1, newProduct.getFoodName());
             st.setInt(2, newProduct.getCal());
@@ -74,7 +68,7 @@ public class DBCFoodDao implements FoodDao {
             return false;
         }
     }
-    }
+}
 
 
 

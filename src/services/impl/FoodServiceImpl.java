@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 
 public class FoodServiceImpl implements FoodService {
-    private String fileName = "/Users/elinasokol/Desktop/CalorieCounter-master/test.txt";
+    private String fileName = "test.txt";
 
     private final FoodDao foodDao;
     private final FileSystemDao fileSystemDao;
@@ -33,8 +33,8 @@ public class FoodServiceImpl implements FoodService {
 
     }
 
-    public void showDiaryFoods() {
-        fileSystemDao.showAllDiary();
+    public List<Food> showDiaryFoods() {
+       return fileSystemDao.showAllDiary();
     }
 
     public void removeDiaryFood(String name, int calories) {

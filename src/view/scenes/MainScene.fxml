@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<SplitPane fx:controller="view.controllers.MainContr" dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="404.0" prefWidth="375.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+  <items>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="569.0">
+         <children>
+            <Button fx:id="addToDBC" onAction="#addProduct" layoutX="53.0" layoutY="39.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="252.0" text="Добавить продукт в базу" />
+            <Button fx:id="deleteFromDBC" onAction="#deleteProduct" layoutX="55.0" layoutY="110.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="252.0" text="Удалить продукт из базы" />
+         </children>
+      </AnchorPane>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="193.0" prefWidth="352.0">
+         <children>
+            <Button fx:id="addToDiary" layoutX="61.0" layoutY="35.0" mnemonicParsing="false" text="Добавить продукт в ежедневник" />
+            <Button fx:id="deleteFromDiary" layoutX="59.0" layoutY="84.0" mnemonicParsing="false" text="Удалить продукт из ежедневника" />
+            <Button fx:id="showDiary" onAction="#showDiary" layoutX="62.0" layoutY="140.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="246.0" text="Показать ежедневник" />
+         </children></AnchorPane>
+  </items>
+</SplitPane>

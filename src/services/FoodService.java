@@ -1,12 +1,16 @@
 package services;
 
 
+import model.Food;
+
+import java.util.List;
+
 public interface FoodService {
 
 
     void addToDiary(String product, int weight);
 
-    void showDiaryFoods();
+    List<Food> showDiaryFoods();
 
     void removeDiaryFood(String name, int calories);
 
